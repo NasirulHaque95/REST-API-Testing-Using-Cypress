@@ -1,0 +1,127 @@
+{
+  "stats": {
+    "suites": 1,
+    "tests": 2,
+    "passes": 2,
+    "pending": 0,
+    "failures": 0,
+    "start": "2022-02-11T08:29:47.676Z",
+    "end": "2022-02-11T08:29:52.540Z",
+    "duration": 4864,
+    "testsRegistered": 2,
+    "passPercent": 100,
+    "pendingPercent": 0,
+    "other": 0,
+    "hasOther": false,
+    "skipped": 0,
+    "hasSkipped": false
+  },
+  "results": [
+    {
+      "uuid": "70ded76c-9e44-4936-b518-35d93e948b1d",
+      "title": "",
+      "fullFile": "cypress/integration/api-crud.js",
+      "file": "cypress/integration/api-crud.js",
+      "beforeHooks": [],
+      "afterHooks": [],
+      "tests": [],
+      "suites": [
+        {
+          "uuid": "bab7ee5a-6ac6-495a-a831-d394727e0c41",
+          "title": "Validate CRUD operation via API using Cypress",
+          "fullFile": "",
+          "file": "",
+          "beforeHooks": [],
+          "afterHooks": [],
+          "tests": [
+            {
+              "title": "Should check and validate the API",
+              "fullTitle": "Validate CRUD operation via API using Cypress Should check and validate the API",
+              "timedOut": null,
+              "duration": 2742,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "cy.request({\n  method: 'GET',\n  url: 'https://restful-booker.herokuapp.com/ping'\n}).then(response => {\n  expect(response.status).to.eq(201);\n});\ncy.request({\n  method: 'GET',\n  url: 'https://restful-booker.herokuapp.com/booking'\n}).then(response => {\n  expect(response.status).to.eq(200);\n  cy.log(JSON.stringify(response));\n});",
+              "err": {},
+              "uuid": "664c9231-4eff-4b98-85b2-46bf82428a09",
+              "parentUUID": "bab7ee5a-6ac6-495a-a831-d394727e0c41",
+              "isHook": false,
+              "skipped": false
+            },
+            {
+              "title": "Create,Read,Update,Delete a New Booking",
+              "fullTitle": "Validate CRUD operation via API using Cypress Create,Read,Update,Delete a New Booking",
+              "timedOut": null,
+              "duration": 2084,
+              "state": "passed",
+              "speed": "fast",
+              "pass": true,
+              "fail": false,
+              "pending": false,
+              "context": null,
+              "code": "//Generate Token\nlet token;\ncy.request({\n  method: 'POST',\n  url: 'https://restful-booker.herokuapp.com/auth',\n  body: {\n    \"username\": \"admin\",\n    \"password\": \"password123\"\n  },\n  headers: {\n    'Content-Type': 'application/json'\n  }\n}).then(response => {\n  expect(response.status).to.eq(200); // cy.log(JSON.stringify(response))\n  token = response.body.token;\n  cy.log(\"Your token is: \" + token);\n}); //Create Booking\nlet lName = \"\";\nvar pattern = \"ABCdef\";\nfor (var i = 0; i < 5; i++) lName += pattern.charAt(Math.floor(Math.random() * pattern.length));\nlet bookId;\ncy.request({\n  method: 'POST',\n  url: 'https://restful-booker.herokuapp.com/booking/',\n  body: {\n    \"firstname\": \"Test\",\n    \"lastname\": lName,\n    \"totalprice\": 123,\n    \"depositpaid\": true,\n    \"bookingdates\": {\n      \"checkin\": \"2023-05-05\",\n      \"checkout\": \"2023-05-10\"\n    },\n    \"additionalneeds\": \"Breakfast\"\n  },\n  headers: {\n    'content-type': 'application/json'\n  }\n}).then(response => {\n  expect(response.status).to.eq(200);\n  expect(response.body.booking).has.property('firstname', 'Test');\n  expect(response.body.booking).has.property('lastname', lName);\n  expect(response.body.booking).has.property('totalprice', 123);\n  bookId = response.body.bookingid;\n  cy.log(\"Your Booking ID is: \" + bookId); //Get Booking details using bookingId\n  cy.request({\n    method: 'GET',\n    url: 'https://restful-booker.herokuapp.com/booking/' + bookId,\n    headers: {\n      'accept': 'application/json'\n    }\n  }).then(response => {\n    expect(response.status).to.eq(200);\n    expect(response.body).has.property('firstname', 'Test');\n    expect(response.body).has.property('lastname', lName);\n    expect(response.body).has.property('totalprice', 123); //Update Firstname and Price field\n    cy.request({\n      method: 'PATCH',\n      url: 'https://restful-booker.herokuapp.com/booking/' + bookId,\n      headers: {\n        'content-type': 'application/json',\n        'accept': 'application/json',\n        'cookie': `token=${token}`\n      },\n      body: {\n        \"firstname\": \"PutTest\",\n        \"totalprice\": 12345\n      }\n    }).then(response => {\n      expect(response.status).to.eq(200);\n      expect(response.body).has.property('firstname', 'PutTest');\n      expect(response.body).has.property('totalprice', 12345);\n    }); //Delete Booking using bookingId\n    cy.request({\n      method: 'DELETE',\n      url: 'https://restful-booker.herokuapp.com/booking/' + bookId,\n      headers: {\n        'content-type': 'application/json',\n        'accept': 'application/json',\n        'cookie': `token=${token}`\n      }\n    }).then(response => {\n      expect(response.status).to.eq(201);\n    });\n    cy.request({\n      method: 'GET',\n      url: 'https://restful-booker.herokuapp.com/booking/' + bookId,\n      failOnStatusCode: false,\n      headers: {\n        'content-type': 'application/json'\n      }\n    }).then(response => {\n      expect(response.status).to.eq(404);\n    });\n  });\n});",
+              "err": {},
+              "uuid": "d0cc8438-2341-4143-9f05-4ad84da63dc8",
+              "parentUUID": "bab7ee5a-6ac6-495a-a831-d394727e0c41",
+              "isHook": false,
+              "skipped": false
+            }
+          ],
+          "suites": [],
+          "passes": [
+            "664c9231-4eff-4b98-85b2-46bf82428a09",
+            "d0cc8438-2341-4143-9f05-4ad84da63dc8"
+          ],
+          "failures": [],
+          "pending": [],
+          "skipped": [],
+          "duration": 4826,
+          "root": false,
+          "rootEmpty": false,
+          "_timeout": 2000
+        }
+      ],
+      "passes": [],
+      "failures": [],
+      "pending": [],
+      "skipped": [],
+      "duration": 0,
+      "root": true,
+      "rootEmpty": true,
+      "_timeout": 2000
+    }
+  ],
+  "meta": {
+    "mocha": {
+      "version": "7.0.1"
+    },
+    "mochawesome": {
+      "options": {
+        "quiet": false,
+        "reportFilename": "report",
+        "saveHtml": true,
+        "saveJson": true,
+        "consoleReporter": "spec",
+        "useInlineDiffs": false,
+        "code": true
+      },
+      "version": "7.0.1"
+    },
+    "marge": {
+      "options": {
+        "reportDir": "cypress/results",
+        "reportFilename": "report",
+        "overwrite": false,
+        "html": true,
+        "json": true,
+        "charts": true,
+        "timestamp": "mmddyyyy_HHMMss"
+      },
+      "version": "6.0.1"
+    }
+  }
+}
